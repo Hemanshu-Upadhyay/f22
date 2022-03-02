@@ -1,9 +1,10 @@
+require('dotenv').config()
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const CompanySchema = require("../model/companySchema");
 
-const secret = "test";
+const secret = process.env.SECRET ;
 
 const CompanySignIn = async (req, res) => {
   const { company_email, company_password } = req.body;
@@ -82,7 +83,20 @@ const CompanySignUp = async (req, res) => {
     console.log(error);
   }
 };
+
+const getCompanies = async (req, res) => {
+    try {
+        const Companies = await CompanySchema.find({})
+        res.json(Companies)
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({message: " Server Error"})
+    }
+}
+
 module.exports = {
   CompanySignUp,
   CompanySignIn,
+  getCompanies,
 };

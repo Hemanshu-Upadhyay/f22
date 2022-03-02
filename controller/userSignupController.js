@@ -1,8 +1,9 @@
+require('dotenv').config()
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Usermodel = require("../model/customerSchema");
 
-const secret = "test";
+const secret = process.env.SECRET;
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -22,7 +23,7 @@ const signin = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ result: oldUser, token });
+    res.status(200).json({message: "Sign-in Successful",result: oldUser, token});
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -50,14 +51,26 @@ const signup = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(201).json({ result, token });
+    res.status(201).json({ result, token, message: "signup successful" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
 
     console.log(error);
   }
 };
+
+const getUsers = async (req, res) => {
+    try {
+        const Users = await Usermodel.find({})
+        res.json(Users)
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({message: " Server Error"})
+    }
+}
 module.exports = {
   signup,
   signin,
+  getUsers,
 };
