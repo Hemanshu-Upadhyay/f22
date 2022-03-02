@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Usermodel = require("../model/customerSchema");
@@ -12,7 +12,9 @@ const signin = async (req, res) => {
     const oldUser = await Usermodel.findOne({ email });
 
     if (!oldUser)
-      return res.status(404).json({ message: "User Does Not Exist Please Signup" });
+      return res
+        .status(404)
+        .json({ message: "User Does Not Exist Please Signup" });
 
     const isPasswordCorrect = await bcrypt.compare(password, oldUser.password);
 
@@ -23,7 +25,9 @@ const signin = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(200).json({message: "Sign-in Successful",result: oldUser, token});
+    res
+      .status(200)
+      .json({ message: "Sign-in Successful", result: oldUser, token });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -60,15 +64,14 @@ const signup = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-    try {
-        const Users = await Usermodel.find({})
-        res.json(Users)
-
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({message: " Server Error"})
-    }
-}
+  try {
+    const Users = await Usermodel.find({});
+    res.json(Users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: " Server Error" });
+  }
+};
 module.exports = {
   signup,
   signin,

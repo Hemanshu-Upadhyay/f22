@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const random = Math.random().toString(36).substring(7);
 
 let BookingSchema = new mongoose.Schema({
   customer_name: { type: String, required: true },
@@ -13,6 +14,7 @@ let BookingSchema = new mongoose.Schema({
   service_date: { type: Date, required: true },
   service_time_start: { type: String, required: true },
   company_address: { type: String, required: true },
+  booking_id: { type: String, required: true, default: random },
 });
 
 mongoose.model("booking", BookingSchema);

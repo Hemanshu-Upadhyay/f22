@@ -1,10 +1,10 @@
-require('dotenv').config()
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const CompanySchema = require("../model/companySchema");
 
-const secret = process.env.SECRET ;
+const secret = process.env.SECRET;
 
 const CompanySignIn = async (req, res) => {
   const { company_email, company_password } = req.body;
@@ -47,6 +47,7 @@ const CompanySignUp = async (req, res) => {
     company_work_schedule,
     available_services,
     available_seats,
+    company_starting_price,
   } = req.body;
 
   try {
@@ -66,6 +67,7 @@ const CompanySignUp = async (req, res) => {
       company_work_schedule: company_work_schedule,
       available_services: available_services,
       available_seats: available_seats,
+      company_starting_price: company_starting_price,
     });
 
     const token = jwt.sign(
@@ -85,18 +87,62 @@ const CompanySignUp = async (req, res) => {
 };
 
 const getCompanies = async (req, res) => {
-    try {
-        const Companies = await CompanySchema.find({})
-        res.json(Companies)
+  try {
+    const Companies = await CompanySchema.find({});
+    res.json(Companies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: " Server Error" });
+  }
+};
 
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({message: " Server Error"})
-    }
-}
+const getCompanyByName = (req, res) => {
+  const company = req.query.company_name;
+  console.log(company);
+  CompanySchema.findOne({ company_name: company })
+    .then((result) => {
+      if (result) {
+        res.json(result);
+      } else {
+        res.json({ message: `No Company Found with name ${company}` });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getcompaniespriceHightoLow = (req, res) => {
+  CompanySchema.find({})
+    .sort({ company_starting_price: -1 })
+    .then((result) => {
+      if (result) {
+        res.json(result);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getcompaniespriceLowtoHigh = (req, res) => {
+  CompanySchema.find({})
+    .sort({ company_starting_price: 1 })
+    .then((result) => {
+      if (result) {
+        res.json(result);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 module.exports = {
   CompanySignUp,
   CompanySignIn,
   getCompanies,
+  getCompanyByName,
+  getcompaniespriceHightoLow,
+  getcompaniespriceLowtoHigh,
 };

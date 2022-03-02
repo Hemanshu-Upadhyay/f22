@@ -34,7 +34,15 @@ let companySchema = new mongoose.Schema({
   available_seats: {
     type: Number,
     required: true,
-    default:10
+    default: 10,
+  },
+  current_bookings: {
+    type: Array,
+    required: true,
+  },
+  company_starting_price: {
+    type: Number,
+    required: true,
   },
 });
 
