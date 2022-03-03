@@ -2,6 +2,8 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Usermodel = require("../model/customerSchema");
+const LoginMail = require('../mailer/LoginMailer')
+const RegisterMail = require('../mailer/RegisterMailer')
 
 const secret = process.env.SECRET;
 
@@ -28,6 +30,7 @@ const signin = async (req, res) => {
     res
       .status(200)
       .json({ message: "Sign-in Successful", result: oldUser, token });
+      LoginMail(oldUser.email)
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -54,7 +57,7 @@ const signup = async (req, res) => {
     const token = jwt.sign({ email: result.email, id: result._id }, secret, {
       expiresIn: "1h",
     });
-
+    RegisterMail(result.email,result.name)
     res.status(201).json({ result, token, message: "signup successful" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });

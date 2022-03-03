@@ -1,6 +1,7 @@
 const bookingschema = require("../model/bookingSchema");
 const UserSchema = require("../model/customerSchema");
 const CompanySchema = require("../model/companySchema");
+const Bookingmail = require('../mailer/BookingMailer')
 
 // for Getting all the bookings
 const Getbookings = (req, res) => {
@@ -8,7 +9,7 @@ const Getbookings = (req, res) => {
     if (!data) {
       res.status(404).json({ message: "No Bookings Found" });
     } else {
-      res.json(data);
+      res.status(200).json(data);
     }
   });
 };
@@ -45,6 +46,7 @@ const CreateBooking = (req, res) => {
   newBooking
     .save()
     .then((data) => {
+      Bookingmail(data.customer_email,data.customer_name,data.service_name,data.service_date,data.service_time_start,data.service_price,booking_id)
       res.json(data);
       UserSchema.findOne({ customer_email: customer_email }).then((user) => {
         if (user) {

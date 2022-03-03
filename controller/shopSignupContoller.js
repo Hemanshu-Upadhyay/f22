@@ -1,6 +1,8 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const LoginMail = require('../mailer/LoginMailer')
+const RegisterMail = require('../mailer/RegisterMailer')
 
 const CompanySchema = require("../model/companySchema");
 
@@ -30,7 +32,7 @@ const CompanySignIn = async (req, res) => {
         expiresIn: "1h",
       }
     );
-
+    LoginMail(oldUser.company_email)
     res.status(200).json({ result: oldUser, token });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
@@ -77,7 +79,7 @@ const CompanySignUp = async (req, res) => {
         expiresIn: "1h",
       }
     );
-
+    RegisterMail(result.company_email,result.company_name)
     res.status(201).json({ result, token });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
